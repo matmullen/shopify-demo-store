@@ -1,43 +1,61 @@
+{% comment %}
+
+  This template will be automatically generated for you if the file doesn't exist,
+  but where's the fun in having no control? Define your layout below.
+
+  The 'layout settings.customer_layout' line is inserted at the top of every customer account template.
+  Your theme's settings determine to use the 'default' or 'theme' customer templates.
+  More info:
+    - http://www.tetchi.ca/shopify-theme-from-scratch-part-11/
+
+{% endcomment %}
+
 {% layout settings.customer_layout %}
 
-<div id="customer-accounts" class="content clearfix customer">
+<div class="grid">
 
-  <!-- Create Customer -->
-  <div id="create-customer">
-    <div class="page-header">
-      <h1>Create an account</h1>
-    </div>
-      
-    <p class="note">New to {{ shop.name }}? Sign up for a free account.</p>
+  <div class="grid-item large--one-third push--large--one-third">
 
+    <header class="page-header">
+      <h1>Create Account</h1>
+    </header>
+
+    {% comment %}
+      This form must use 'create_customer'
+    {% endcomment %}
     {% form 'create_customer' %}
-      
-      {{ form.errors | default_errors }}
 
-      <div id="first_name" class="clearfix form-row">
-        <label for="first_name" class="login">First Name</label>
-        <input type="text" name="customer[first_name]" id="first_name" class="styled-input" placeholder="Your first name" value="{{ form.first_name }}" size="30" />
+      {% include 'form-errors-custom' %}
+
+      <div id="first_name">
+        <label for="first_name">First Name</label>
+        <input type="text" value="" name="customer[first_name]" id="first_name" {% if form.errors contains "first_name" %} class="error"{% endif %} autocapitalize="words">
       </div>
 
-      <div id="last_name" class="clearfix form-row">
-        <label for="last_name" class="login">Last Name</label>
-        <input type="text" name="customer[last_name]" id="last_name" class="styled-input" placeholder="Your last name" value="{{ form.last_name }}" size="30" />
+      <div id="last_name">
+        <label for="last_name">Last Name</label>
+        <input type="text" value="" name="customer[last_name]" id="last_name" {% if form.errors contains "last_name" %} class="error"{% endif %} autocapitalize="words">
       </div>
 
-      <div id="email" class="clearfix form-row">
-        <label for="email" class="login">Email Address</label>
-        <input type="email" name="customer[email]" id="email" class="styled-input{% if form.errors contains 'email' %} error{% endif %}" placeholder="your@email.com" value="{{ form.email }}" size="30" />
+      <div id="email">
+        <label for="email">Email Address</label>
+        <input type="email" value="" name="customer[email]" id="email" placeholder="your-email@shopify.com" {% if form.errors contains "email" %} class="error"{% endif %} autocorrect="off" autocapitalize="off">
       </div>
 
-      <div id="password" class="clearfix form-row">
-        <label for="password" class="login">Password</label>
-        <input type="password" name="customer[password]" id="password" class="password styled-input{% if form.errors contains 'password' %} error{% endif %}" value="{{ form.password }}" size="30" />
+      <div id="create_password">
+        <label for="password">Password</label>
+        <input type="password" value="" name="customer[password]" id="create_password" {% if form.errors contains "password" %} class="error"{% endif %}>
       </div>
 
-      <div class="action-bottom clearfix">
-        <input class="btn styled-submit" type="submit" value="Create" />
+      <div class="text-center">
+        <p>
+          <input type="submit" value="Create" class="btn">
+        </p>
+        or <a href="{{ shop.url }}">Return to Store</a>
       </div>
+
     {% endform %}
-  </div><!-- /#create-customer -->
 
-</div><!-- #customer-accounts -->
+  </div>
+
+</div>

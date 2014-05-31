@@ -1,0 +1,77 @@
+--------------------------------------------------------------
+Background Color & Font Color Changes:
+
+==============================
+CSS 
+==============================
+
+body {
+
+ background-color: {{ settings.background_color }}; */
+
+}
+
+
+h2, .h2 { font-size: {{ settings.font_size }}px; } 
+========================================
+
+==============================
+Settings:
+==============================
+
+<fieldset>
+  <legend>Lesson Plan Settings</legend>
+  <table>
+    <tr>
+      <th><label for="font_size">Font Size</label></th>
+      <td>
+        <input id="font_size" name="font_size" size="2" value="" />px
+      </td>
+    </tr>
+    <tr>
+      <th><label for="header_color">Color</label></th>
+      <td>
+        <input id="header_color" name="header_color" class="color" value="" />
+      </td>
+    </tr>
+  </table>
+</fieldset>
+
+--------------------------------------------------------------
+
+How to add product tags to the product.liquid page
+
+====================================
+How to display tags on the homepage 
+====================================
+
+
+         {% if product.tags.size > 0 %}
+  			<span>Tags:</span>
+			  {% for tag in product.tags %}
+		    <a href="{{ collection.url }}/collections/{{ tag | handle }}">{{ tag }}</a>{% unless forloop.last %}, {% endunless %}
+	     {% endfor %}
+         {% endif %}
+
+====================================
+More advanced w/settings option:
+====================================
+
+         {% if settings.display_tags %}
+
+  		 {% endif %}
+
+
+
+--------------------------------------------------------------
+How to change the default collection name
+
+========================================================================
+Change from collections.frontpage to collections.YOURCOLLECTIONNAME
+========================================================================
+
+  {% for product in collections.frontpage.products limit:6 %}
+
+{%endfor%}
+
+--------------------------------------------------------------

@@ -1,0 +1,7 @@
+  		<p> 
+           {% if product.tags.size > 0 %}
+              <span>Tags:</span>
+                {% for tag in product.tags %}
+          <a href="{{ collection.url }}/collections/all/{{ tag | handle }}">{{ tag }}</a>{% unless forloop.last %}, {% endunless %}
+           	{% endfor %}
+           {% endif %}

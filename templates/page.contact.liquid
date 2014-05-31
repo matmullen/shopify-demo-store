@@ -1,68 +1,64 @@
-<div class="clearfix page-container">
+{% comment %}
 
-  <h1 class="page-title">{{ page.title }}</h1>
+  This page template is a requirement if you are submitting your theme to the Shopify Theme Store.
+  Be sure to select page.contact as the template from the admin page to have this template take effect.
 
-  <div id="page-content" class="{% if settings.show_page_blog == false %}full-width{% endif %}">
-    
-    <div class="rte">{{ page.content }}</div>
-    
-    <div id="contact-form-wrapper">
-    
+  For information on adding more fields, visit:
+    - http://docs.shopify.com/support/configuration/store-customization/adding-fields-to-the-liquid-contact-form
+
+{% endcomment %}
+
+<div class="grid">
+
+  <div class="grid-item large--two-thirds push--large--one-sixth">
+
+    <header class="page-header">
+      <h2>{{ page.title }}</h2>
+    </header>
+
+    {% comment %}
+      Regular page content goes here.
+    {% endcomment %}
+    <div class="rte">
+      {{ page.content }}
+    </div>
+
+    {% comment %}
+      Contact form starts here
+    {% endcomment %}
+    <div>
       {% form 'contact' %}
 
-      {% if form.posted_successfully? %}
-      <div class="success feedback accent-text">
-        <p>Thanks for contacting us! We'll get back to you as soon as possible.</p>
-      </div>
-      {% endif %}
+        {% comment %}
+          Successful message
+        {% endcomment %}
+        {% if form.posted_successfully? %}
+          <p class="note form-success">
+            Thanks for contacting us! We'll get back to you as soon as possible.
+          </p>
+        {% endif %}
 
-      {% if form.errors %}
-      <div class="error feedback accent-text">
-        <p>Oops, sorry. We were unable to submit your inquiry because it contained {{ form.errors | size | pluralize: 'an error', 'a few errors' }}. Please correct the following and submit again:</p>
-        {% for field in form.errors %}
-          <p>The {{ field | capitalize | replace: 'Body', 'Message' }} field {{ form.errors.messages[field] }}.</p>
-        {% endfor %}
-      </div>
-      {% endif %}
-      
-      {% unless form.posted_successfully? %}
-    
-      <p>
-        <label>Your Name:</label>
-        <input type="text" id="contactFormName" name="contact[name]" placeholder="Your name" class="styled-input{% if form.errors contains 'name' %} error{% endif %}" value="{{ contact.fields.name }}" />
-      </p>
-      <p>
-        <label>Email:</label>
-        <input required="required" type="email" id="contactFormEmail" name="contact[email]" placeholder="your@email.com" class="styled-input{% if form.errors contains 'email' %} error{% endif %}" value="{{ contact.fields.email }}" />
-      </p>
-      <p>
-        <label>Phone Number:</label>
-        <input type="tel" id="contactFormTelephone" name="contact[phone]" placeholder="555-555-1234" class="styled-input{% if form.errors contains 'phone' %} error{% endif %}" value="{{ contact.fields.phone }}" />
-      </p> 
-      <p>
-        <label>Message:</label>
-        <textarea required="required" rows="10" cols="60"  id="contactFormMessage" name="contact[body]" placeholder="Your Message" class="styled-input{% if form.errors contains 'body' %} error{% endif %}">{{  contact.fields.body }}</textarea>
-      </p>
-      <p>
-        <input class="btn styled-submit" type="submit" id="contactFormSubmit" value="Send" />
-      </p>
-      
-      {% endunless %}
-    
-      {% if form.posted_successfully? or form.errors %}
-        <script>
-          window.location.hash = '#page-content';
-        </script>
-      {% endif %}
+        {% include 'form-errors-custom' %}
 
-    {% endform %}
-    
-    </div><!-- #contact-form-wrapper -->  
-    
-  </div><!-- #page-content -->
-  
-  {% if settings.show_page_blog %} {% include 'snippet-sidebar' %} {% endif %}
+        <div id="contactFormWrapper">
+          <label for="contactFormName">Your Name</label>
+          <input type="text" id="contactFormName" name="contact[name]" placeholder="John Doe" autocapitalize="words" value="{% if customer %}{{ customer.name }}{% endif %}">
 
-</div><!-- #page-container -->
-{% include 'snippet-breadcrumbs' %}
+          <label for="contactFormEmail">Email</label>
+          <input type="email" name="contact[email]" placeholder="john@example.com" id="contactFormEmail" autocorrect="off" autocapitalize="off" value="{% if customer %}{{ customer.email }}{% endif %}">
 
+          <label for="contactFormPhone">Phone Number</label>
+          <input type="tel" name="contact[phone]" id="contactFormPhone" placeholder="555-555-1234" pattern="[0-9]*">
+
+          <label for="contactFormMessage">Message</label>
+          <textarea rows="10" name="contact[body]" placeholder="Your Message" id="contactFormMessage"></textarea>
+
+          <input type="submit" class="btn right" value="Send">
+        </div>
+
+      {% endform %}
+    </div>
+
+  </div>
+
+</div>

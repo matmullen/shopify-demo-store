@@ -118,24 +118,24 @@
           {% comment %}
             Optionally show the 'compare at' or original price of the product.
           {% endcomment %}
-          {% if product.compare_at_price > product.price %}
-            <strong class="h2">
-              <span id="productPrice" class="on-sale" itemprop="price">
-                {{ product.price | money }}
-              </span>
-            </strong>
-            <small id="comparePrice">
-              Compare at:
-              {{ product.compare_at_price_max | money }}
-            </small>
-          {% else %}
-          <strong class="h2">
-              <span id="productPrice" itemprop="price">
-                {{ product.price | money }}
-              </span>
-            </strong>
-          {% endif %}
+            
+            
+          {% if product.price == 0 %}
 
+		   <strong class="h2">  
+             Call us for pricing
+           </strong>  
+          {% else %}
+        
+           <strong class="h2">
+              <span id="productPrice" itemprop="price">
+               {{ product.price | money }}
+              </span>
+           </strong>
+        {% endif %}  
+            
+            
+         
           {% comment %}
             Quantity selector is optional
           {% endcomment %}
@@ -150,18 +150,6 @@
           {{ product.description }}
         </div>
 		
-          
-          
-          
-          
-          <!--SHOW TAGS FOR A PRODUCT -->
-          
-                      {% include 'product-tags' %}
-
-          
-         {% if settings.display_tags %}
-            {% include 'product-tags' %}
-		 {% endif %}
           
           
           

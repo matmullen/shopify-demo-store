@@ -1,74 +1,100 @@
-{% paginate search.results by settings.search_ppp %}
-<div class="page-container clearfix">
+{% comment %}
 
-  <h1 class="page-title">{{ settings.search_title }}</h1>
+  The {{ content_for_header }} in theme.liquid will output the following stylesheet just for this page:
+    - <link rel="stylesheet" href="/global/search.css" type="text/css">
 
-  <div id="search-content" class="{% if settings.show_page_blog == false %}full-width{% endif %}">
+  It has a few helpers in there, but this theme writes its own styles so there
+  are no dependencies or conflicts. You can ignore that file.
+
+  Return only products or pages in results:
+    - http://docs.shopify.com/manual/configuration/store-customization/return-only-product-in-storefront-search-results
+    - Or manually add type=product or type=page to the search URL as a parameter
+
+{% endcomment %}
+
+
+{% comment %}
+  If you're only showing products with the method above, why not show them off in a grid instead?
+  Set grid_results to true and see your updated results page for the new layout.
+{% endcomment %}
+{% assign grid_results = false %}
+
+<div class="grid">
+
+  <div class="grid-item large--two-thirds push--large--one-sixth">
+
     {% if search.performed %}
-    
-      {% if search.results.size > 0 %}
-      
-      <p class="accent-text" id="searching-for">{{ search.results_count }} {{ search.results_count | pluralize: 'result', 'results' }} found for "{{ search.terms }}"</p>
 
-      <ol>
-        {% for item in search.results %}
-        <li class="search-result {% if forloop.first %}first{% endif %} {% if forloop.last %}last{% endif %} clearfix">
-          {% if item.featured_image %}
-          <a class="search-result-image" href="{{ item.url }}" title="{{ item.title | escape }}">
-            <img{% unless item.available %} class="sold-out"{% endunless %} src="{{ item.featured_image | product_img_url: 'large' }}" />
-          </a>
+      {% comment %}
+        Avoid accessing search.results before the opening paginate tag.
+        If you do, the pagination of results will be broken.
+      {% endcomment %}
+      {% paginate search.results by 10 %}
+
+        {% comment %}
+          We don't have any results to show. Feel free to show off featured products
+          or suggested searches here.
+        {% endcomment %}
+        {% if search.results_count == 0 %}
+
+          <header class="page-header">
+            <h2>Your search for "{{ search.terms }}" did not yield any results.</h2>
+            {% include 'search-bar' %}
+          </header>
+
+        {% else %}
+
+          <header class="page-header">
+            <h2>Your search for "{{ search.terms }}" revealed the following:</h2>
+            {% include 'search-bar' %}
+          </header>
+
+          {% comment %}
+            Each result template, based on the grid_layout variable above
+          {% endcomment %}
+          {% if grid_results == false %}
+
+            {% for item in search.results %}
+              {% include 'search-result' %}
+            {% endfor %}
+
+          {% else %}
+
+            <div class="grid-uniform">
+              {% for item in search.results %}
+                {% include 'search-result-grid' %}
+              {% endfor %}
+            </div>
+
           {% endif %}
 
-          <div class="search-result-details {% unless item.featured_image %}no-image{% endunless %}">
-            <h2 class="search-result-title">{{ item.title | link_to: item.url }}{% if item.available == false %} <span class="accent-text">Sold Out</span>{% endif %}</h2>
-            {% if item.featured_image %}
-              {% assign product = item %}
-              {% if product.compare_at_price > product.price %}
-              <p class="on-sale accent-text search-result-price">
-                {{ product.price | money }} 
-                <em class="compare-at-price">{{ product.compare_at_price | money }}</em>
-              </p>
-              {% else %}
-              <p class="accent-text search-result-price">
-                {% if product.price_varies %}From{% endif %}
-                {{ product.price | money }}
-              </p>
-              {% endif %}
-            {% endif %}
-            <p class="search-result-description">{% if item.featured_image %}{{ item.description | strip_html | truncatewords: 55 | highlight: search.terms }}{% else %}{{ item.content | strip_html | truncatewords: 55 | highlight: search.terms }}{% endif %}</p>
-          </div><!-- .result-details -->
-        </li>
-        {% endfor %}
+        {% endif %}
 
-        <li class="search-pagination">
-          {% include 'snippet-pagination' %}
-        </li>
-      </ol>
-      
-      {% else %}
-      
-      <p id="searching-for" class="accent-text">No results were found for "{{ search.terms }}"</p>
-      
-      {% endif %}
-    
+        {% if paginate.pages > 1 %}
+          <div class="text-center">
+            {% include 'pagination-custom' %}
+          </div>
+        {% endif %}
+
+      {% endpaginate %}
+
+
+    {% else %}
+
+      {% comment %}
+        If search.performed is false, someone either accessed the page without
+        the q parameter, or it was blank.
+        Be sure to show a search form here, along with anything else you want to showcase.
+      {% endcomment %}
+
+      <header class="page-header">
+        <h2>Search for products on our site</h2>
+        {% include 'search-bar' %}
+      </header>
+
     {% endif %}
-    
-    {% unless search.performed and search.results.size > 0 %}
-    
-    <form action="/search" method="get">
-      <p>{% if settings.search_products_only %}
-        <input type="hidden" name="type" value="product" />{% endif %}
-        <input name="q" type="text" class="styled-input" placeholder="Search store..." />
-        <input type="submit" value="Submit" name="submit" class="btn styled-submit" />
-      </p>
-    </form>
-    
-    {% endunless %}
-    
-  </div><!-- #search-content -->
-  {% endpaginate %}
 
-  {% if settings.show_page_blog %} {% include 'snippet-sidebar' %} {% endif %}
 
-</div><!-- .page-container -->
-{% include 'snippet-breadcrumbs' %}
+  </div>
+
+</div>
